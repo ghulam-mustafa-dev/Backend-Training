@@ -4,7 +4,7 @@ const { connectDB } = require("./config/db");
 
 const User = require("./models/userModel");
 
-const userRoute = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
 
 const app = express();
 const port = process.env.PORT;
@@ -17,7 +17,7 @@ connectDB();
 User.sync();
 
 // API Routes
-app.use("/api", userRoute);
+app.use("/api/auth", authRoute);
 
 
 app.listen(port, () => {

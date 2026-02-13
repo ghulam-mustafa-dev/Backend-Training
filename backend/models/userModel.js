@@ -1,6 +1,5 @@
-const { DataTypes, ValidationError } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const { sequelize } = require("../config/db");
-const { application } = require('express');
 
 const User = sequelize.define(
   'user',
@@ -40,6 +39,20 @@ const User = sequelize.define(
         len: [8, 60]
       }
     },
+    is_verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      validate: {
+        notEmpty: true
+      }
+    },
+    email_verifcation_token: {
+      type: DataTypes.STRING,
+    },
+    email_verification_expires: {
+      type: DataTypes.DATE,
+    }
   },
   {
     // Other model options go here
