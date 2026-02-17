@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { z, ZodError } = require("zod");
 const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/emailVerification");
+const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 
 const Signup = async (req, res) => {
@@ -23,7 +24,7 @@ const Signup = async (req, res) => {
                 email: validatedData.email
             }
         });
-        if(existingEmail){
+        if(!existingEmail){
             return res.status(400).json({error: "User already exists with this email"});
         }
 
@@ -84,7 +85,64 @@ const VerifyEmail = async (req, res) => {
 }
 
 const Login = async (req, res) => {
+    try{
+        const { email, password } = req.body;
+        const userSchema = z.object({
+            email: z.string().email("Invalid email address"),
+            password: z.string().min(8, "Password must be atleast 8 characters"),
+        });
+        const validatedData = userSchema.parse({ email, password });
 
+        const user = await User.findOne({
+            where: {
+                email: validatedData.email
+            }
+        });
+        if(!user){
+            return res.status(401).json({error: "Invalid credentials"});
+        }
+        const checkPassword = await bcrypt.compare(validatedData.password, user.password);
+        if(!checkPassword){
+            return res.status(401).json({error: "Invalid credentials"});
+        }
+        
+        if(!user.is_verified){
+            return res.status(403).json({error: "Email is not verified"});
+        }
+
+        const payload = {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }
+        const access_token = generateAccessToken(payload);
+
+        const refresh_token = generateRefreshToken(payload);
+
+        res.cookie("__Secure-at", access_token, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict"
+        });
+        res.cookie("__Secure-rt", refresh_token, {
+            maxAge: 90 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+        });
+        return res.status(200).json({ message: "Login Successful" });
+    }
+    catch(error){
+        if(error instanceof ZodError){
+            const formattedErrors = error.issues.map((issue) => ({
+                field: issue.path[0],
+                message: issue.message
+            }));
+            return res.status(400).json({ errors: formattedErrors });
+        }
+        return res.status(500).json({error: "An error occured while login"});
+    }
 }
 
 module.exports = { Signup, Login, VerifyEmail };
