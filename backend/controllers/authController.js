@@ -1,7 +1,8 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const { z, ZodError } = require("zod");
+const { z, ZodError, email } = require("zod");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const sendVerificationEmail = require("../utils/emailVerification");
 const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
@@ -54,7 +55,7 @@ const Signup = async (req, res) => {
             }));
             return res.status(400).json({errors: formattedErrors });
         }
-        return res.status(500).json({error: "An error occured while registering user " + error});
+        return res.status(500).json({error: "An error occured while registering user"});
     }
 }
 
@@ -145,4 +146,36 @@ const Login = async (req, res) => {
     }
 }
 
-module.exports = { Signup, Login, VerifyEmail };
+const RefreshToken = async (req, res) => {
+    try{
+        const refreshToken = req.cookies["__Secure-rt"];
+        
+        if(!refreshToken){
+            return res.status(401).json({ error: "No refresh token provided" });
+        }
+        const refresh_secret = process.env.JWT_REFRESH_SECRET;
+        const decoded = jwt.verify(refreshToken, refresh_secret);
+
+        if(!decoded){
+            return res.status(403).json({ error: "Invalid refresh token" });
+        }
+        const payload = {
+            id: decoded.id,
+            name: decoded.name,
+            email: decoded.email
+        }
+        const newAccessToken = generateAccessToken(payload);
+        res.cookie("__Secure-at", newAccessToken, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict"
+        });
+        return res.status(200).json({ message: "Access token refreshed" });
+    }
+    catch(error){
+        return res.status(403).json({ error: "Invalid refresh token" });
+    }
+}
+
+module.exports = { Signup, Login, VerifyEmail, RefreshToken };
