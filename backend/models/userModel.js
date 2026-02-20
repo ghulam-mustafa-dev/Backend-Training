@@ -47,7 +47,7 @@ const User = sequelize.define(
         notEmpty: true
       }
     },
-    email_verifcation_token: {
+    email_verification_token: {
       type: DataTypes.STRING,
     },
     email_verification_expires: {

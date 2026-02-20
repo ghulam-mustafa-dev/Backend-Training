@@ -3,6 +3,8 @@ require('dotenv').config();
 const { connectDB } = require("./config/db");
 const cookieParser = require("cookie-parser");
 const User = require("./models/userModel");
+const PasswordResets = require("./models/PasswordResetModel");
+require("./models/index");
 const authRoute = require("./routes/authRoute");
 
 const app = express();
@@ -15,6 +17,7 @@ connectDB();
 
 // Model Sync
 User.sync();
+PasswordResets.sync();
 
 // API Routes
 app.use("/api/auth", authRoute);
