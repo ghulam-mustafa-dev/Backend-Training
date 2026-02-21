@@ -126,7 +126,7 @@ const Login = async (req, res) => {
             secure: false,
             sameSite: "strict",
         });
-        return res.status(200).json({ message: "Login Successful" });
+        return res.status(200).json({ message: "Login Successful " + access_token + " ------ " + refresh_token });
     }
     catch(error){
         if(error instanceof ZodError){
@@ -321,5 +321,27 @@ const NewPasswordForm = async (req, res) => {
     }
 }
 
+const Logout = async (req, res) => {
+    try{
+        res.clearCookie('__Secure-at', {
+            maxAge: 0,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            path: "/"
+        });
+        res.clearCookie('__Secure-rt', {
+            maxAge: 0,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            path: "/"
+        });
+        return res.status(200).json({message: "Logged out successfully"});
+    }
+    catch(error){
+        return res.status(500).json({error: "An error occured while logging out"});
+    }
+}
 
-module.exports = { Signup, Login, VerifyEmail, RefreshToken, ForgotPassword, VerifyPasswordToken, NewPasswordForm };
+module.exports = { Signup, Login, VerifyEmail, RefreshToken, ForgotPassword, VerifyPasswordToken, NewPasswordForm, Logout };
