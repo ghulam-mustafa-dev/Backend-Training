@@ -1,12 +1,11 @@
 const User = require("../models/userModel");
-const PasswordResets = require("../models/PasswordResetModel");
+const PasswordReset = require("../models/PasswordResetModel");
 const bcrypt = require("bcrypt");
-const { z, ZodError, includes } = require("zod");
+const { z, ZodError } = require("zod");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { sendVerificationEmail, sendForgotPasswordEmail } = require("../utils/emailVerification");
 const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
-const e = require("express");
 
 
 const Signup = async (req, res) => {
@@ -126,7 +125,7 @@ const Login = async (req, res) => {
             secure: false,
             sameSite: "strict",
         });
-        return res.status(200).json({ message: "Login Successful " + access_token + " ------ " + refresh_token });
+        return res.status(200).json({ message: "Login Successful" });
     }
     catch(error){
         if(error instanceof ZodError){
@@ -196,7 +195,7 @@ const ForgotPassword = async (req, res) => {
         const url = process.env.FRONTEND_BASE_URL;
         const resetPasswordUrl = `${url}/api/auth/forgot-password?token=${password_resetToken}&id=${user.id}`;
         
-        const resetPassword = await PasswordResets.create({
+        const resetPassword = await PasswordReset.create({
             user_id: user.id,
             password_reset_token: password_resetToken,
             password_reset_expires: password_resetExpires,
@@ -225,7 +224,7 @@ const VerifyPasswordToken = async (req, res) => {
         if(!user_id){
             return res.status(400).json({error: "User id is required"});
         }
-        const resetRecord = await PasswordResets.findOne({
+        const resetRecord = await PasswordReset.findOne({
             where: {
                 password_reset_token: token,
                 user_id: user_id
@@ -234,7 +233,7 @@ const VerifyPasswordToken = async (req, res) => {
         if(!resetRecord){
             return res.status(400).json({error: "Invalid token or user"});
         }
-        const tokenExists = await PasswordResets.findOne({
+        const tokenExists = await PasswordReset.findOne({
             where: {
                 password_reset_token: token
             }
@@ -242,7 +241,7 @@ const VerifyPasswordToken = async (req, res) => {
         if(!tokenExists){
             return res.status(400).json({error: "Invalid Token"});
         }
-        const userExists = await PasswordResets.findOne({
+        const userExists = await PasswordReset.findOne({
             where: {
                 user_id: user_id
             }
@@ -278,7 +277,7 @@ const NewPasswordForm = async (req, res) => {
         return res.status(400).json({error: "User id is required"});
     }
 
-    const resetRecord = await PasswordResets.findOne({
+    const resetRecord = await PasswordReset.findOne({
             where: {
                 password_reset_token: token,
                 user_id: user_id
@@ -299,7 +298,7 @@ const NewPasswordForm = async (req, res) => {
         { where: { id: user_id }}
     );
 
-    await PasswordResets.update(
+    await PasswordReset.update(
         { 
             password_reset_token: null,
             password_reset_expires: null

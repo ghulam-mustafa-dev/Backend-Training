@@ -2,8 +2,8 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require("../config/db");
 
 
-const PasswordResets = sequelize.define(
-  'password_resets',
+const PasswordReset = sequelize.define(
+  'PasswordReset',
   {
     // Model attributes are defined here
     id: {
@@ -36,9 +36,10 @@ const PasswordResets = sequelize.define(
   },
   {
     // Other model options go here
-    timestamps: true
+    timestamps: true,
+    tableName: 'password_resets'
   },
 );
 
 
-module.exports = PasswordResets;
+module.exports = PasswordReset;

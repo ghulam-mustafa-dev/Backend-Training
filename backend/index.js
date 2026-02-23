@@ -3,9 +3,12 @@ require('dotenv').config();
 const { connectDB } = require("./config/db");
 const cookieParser = require("cookie-parser");
 const User = require("./models/userModel");
-const PasswordResets = require("./models/PasswordResetModel");
+const PasswordReset = require("./models/PasswordResetModel");
+const Task = require("./models/TaskModel");
+const FileAttachment = require("./models/FileAttachmentModel");
 require("./models/index");
 const authRoute = require("./routes/authRoute");
+const taskRoute = require("./routes/taskRoute");
 
 const app = express();
 const port = process.env.PORT;
@@ -17,10 +20,13 @@ connectDB();
 
 // Model Sync
 User.sync();
-PasswordResets.sync();
+PasswordReset.sync();
+Task.sync();
+FileAttachment.sync();
 
 // API Routes
 app.use("/api/auth", authRoute);
+app.use("/api/task", taskRoute);
 
 
 app.listen(port, () => {
