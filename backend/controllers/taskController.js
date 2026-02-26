@@ -13,6 +13,15 @@ const CreateTask = async (req, res) => {
         const validatedData = taskSchema.parse(req.body);
         
         const file_attachment_url = `/uploads/tasks/${req.file.filename}`;
+
+        const taskCount = await Task.count({
+            where: {
+                user_id: req.user.id
+            }
+        });
+        if(taskCount >= 50){
+            return res.status(400).json({error: "Task limit reached (50 max)"});
+        }
         
         const task = await Task.create({
             user_id: req.user.id,
