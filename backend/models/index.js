@@ -1,7 +1,6 @@
 const PasswordReset = require("./PasswordResetModel");
 const User = require("./userModel");
 const Task = require("./TaskModel");
-const FileAttachment = require("./FileAttachmentModel");
 
 // user - password reset
 User.hasMany(PasswordReset, {
@@ -21,13 +20,5 @@ Task.belongsTo(User, {
   foreignKey: 'user_id'
 });
 
-// task - file attachment
-Task.hasMany(FileAttachment, {
-  foreignKey: 'task_id'
-});
 
-FileAttachment.belongsTo(Task, {
-  foreignKey: 'task_id'
-});
-
-module.exports = { User, PasswordReset, Task, FileAttachment };
+module.exports = { User, PasswordReset, Task };

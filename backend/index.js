@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser");
 const User = require("./models/userModel");
 const PasswordReset = require("./models/PasswordResetModel");
 const Task = require("./models/TaskModel");
-const FileAttachment = require("./models/FileAttachmentModel");
 require("./models/index");
 const authRoute = require("./routes/authRoute");
 const taskRoute = require("./routes/taskRoute");
@@ -22,7 +21,6 @@ connectDB();
 User.sync();
 PasswordReset.sync();
 Task.sync();
-FileAttachment.sync();
 
 // API Routes
 app.use("/api/auth", authRoute);

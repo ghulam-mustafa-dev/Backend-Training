@@ -45,6 +45,9 @@ const Task = sequelize.define(
     completion_date_time:{
         type: DataTypes.DATE,
         allowNull: true
+    },
+    file_attachment: {
+        type: DataTypes.STRING
     }
   },
   {
