@@ -9,6 +9,7 @@ const CreateTask = async (req, res) => {
             title: z.string().min(3),
             description: z.string().optional(),
             due_date_time: z.coerce.date(),
+            completion_date_time: z.coerce.date()
         });
         const validatedData = taskSchema.parse(req.body);
         
@@ -28,6 +29,7 @@ const CreateTask = async (req, res) => {
             title: validatedData.title,
             description: validatedData.description,
             due_date_time: validatedData.due_date_time,
+            completion_date_time: validatedData.completion_date_time,
             file_attachment: file_attachment_url
         });
         return res.status(201).json({message: "Task created successfully"});
@@ -64,6 +66,7 @@ const EditTask = async (req, res) => {
             title: z.string().min(3).optional(),
             description: z.string().optional(),
             due_date_time: z.coerce.date().optional(),
+            completion_date_time: z.coerce.date().optional()
         });
         const validatedData = taskSchema.parse(req.body);
         const task = await Task.findOne({
