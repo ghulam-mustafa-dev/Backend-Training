@@ -130,5 +130,18 @@ const DownloadTaskFile = async (req, res) => {
     }
 }
 
-module.exports = { CreateTask, AllTasks, EditTask, DeleteTask, DownloadTaskFile };
+const SimilarTasks = async (req, res) => {
+    try{
+        const tasks = await Task.findAll({
+            where: {
+                user_id: req.user.id
+            }
+        })
+    }
+    catch(error){
+        return res.status(500).json({error: "An error occurred"});
+    }
+}
+
+module.exports = { CreateTask, AllTasks, EditTask, DeleteTask, DownloadTaskFile, SimilarTasks };
 

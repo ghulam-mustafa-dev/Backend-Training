@@ -9,6 +9,7 @@ require("./models/index");
 const authRoute = require("./routes/authRoute");
 const taskRoute = require("./routes/taskRoute");
 const taskAnalyticsRoute = require("./routes/taskAnalyticsRoute");
+const startTaskReminderJob = require("./jobs/taskRemainder");
 
 const app = express();
 const port = process.env.PORT;
@@ -31,4 +32,5 @@ app.use("/api/task/analytics", taskAnalyticsRoute);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    startTaskReminderJob();
 });

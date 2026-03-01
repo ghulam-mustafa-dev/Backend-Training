@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const cron = require("node-cron");
 
 
 const transporter = nodemailer.createTransport({
@@ -46,4 +47,21 @@ const sendForgotPasswordEmail = async (email, name, resetPasswordUrl) => {
   await transporter.sendMail(mailOptions);
 }
 
-module.exports = { sendVerificationEmail, sendForgotPasswordEmail };
+const SendTaskReminder = async (email, name, title) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Task Reminder",
+        html: `
+        <body>
+            <h3>Tasks Due Today</h3>
+            <h4>Hi, ${name}</h4>
+            <p>Your task "<strong>${title}</strong>" is due today.</p>
+            <p>Please make sure to complete it.</p>
+        </body>
+        `
+    };
+    await transporter.sendMail(mailOptions);
+};
+
+module.exports = { sendVerificationEmail, sendForgotPasswordEmail, SendTaskReminder };
