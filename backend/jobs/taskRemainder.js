@@ -3,7 +3,7 @@ const TasksDueOnDate = require("../service/taskService");
 const { SendTaskReminder } = require("../utils/emailVerification");
 
 const startTaskReminderJob = () => {
-    cron.schedule("* * * * *", async () => {
+    cron.schedule("0 0 * * *", async () => {
 
         const tasks = await TasksDueOnDate(new Date());
 

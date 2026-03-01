@@ -10,11 +10,18 @@ const authRoute = require("./routes/authRoute");
 const taskRoute = require("./routes/taskRoute");
 const taskAnalyticsRoute = require("./routes/taskAnalyticsRoute");
 const startTaskReminderJob = require("./jobs/taskRemainder");
+const logger = require("./logs/logger");
 
 const app = express();
 const port = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
+
+// logging
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url} ${res.statusCode}`);
+    next();
+});
 
 // DB Connection
 connectDB();
@@ -31,6 +38,7 @@ app.use("/api/task/analytics", taskAnalyticsRoute);
 
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    app.use
+    logger.info(`Server running on port ${port}`);
     startTaskReminderJob();
 });

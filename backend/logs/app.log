@@ -1,0 +1,20 @@
+info: Server running on port 5000
+info: GET /api/task/analytics/task-summary 200
+info: GET /api/task/analytics/avg-per-day 200
+info: GET /api/task/analytics/overdue-count 200
+info: POST /api/auth/login 200
+info: POST /api/task 200
+info: POST /api/task 200
+info: POST /api/task 200
+info: POST /api/task 200
+info: Server running on port 5000
+info: POST /api/task 200
+info: Server running on port 5000
+info: POST /api/task 200
+info: POST /api/task 200
+info: Server running on port 5000
+info: POST /api/task 200
+info: POST /api/task 200
+info: POST /api/task 200
+info: Server running on port 5000
+info: GET /api/task 200
